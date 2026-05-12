@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum GeneralSuccessCode implements BaseSuccessCode {
 
-	OK(HttpStatus.OK, "COMMON200", "성공적으로 처리됐습니다.");
+	OK(HttpStatus.OK, "SUCCESS", "성공적으로 처리됐습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
