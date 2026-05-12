@@ -27,22 +27,22 @@ public class ExceptionAdvice {
 	 * [커스텀 예외] 직접 정의한 예외(GeneralException)을 처리
 	 */
 	@ExceptionHandler(GeneralException.class)
-	public ResponseEntity<ApiResponse<Object>> handleCustomException(GeneralException e) {
-		BaseErrorCode code = e.getErrorCode();
+	public ResponseEntity<ApiResponse<Object>> handleCustomException(GeneralException exception) {
+		BaseErrorCode code = exception.getErrorCode();
 
-		log.warn("CustomException: {}", e.getErrorCode().getMessage());
+		log.warn("CustomException: {}", exception.getErrorCode().getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
-			.body(ApiResponse.onFailure(code, e.getMessage()));
+			.body(ApiResponse.onFailure(code, exception.getMessage()));
 	}
 
 	/**
 	 * [유효성 검사 예외] @Valid를 통한 유효성 검증 실패 처리
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException e) {
-		var errors = e.getBindingResult().getFieldErrors()
+	public ResponseEntity<ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException exception) {
+		var errors = exception.getBindingResult().getFieldErrors()
 			.stream()
 			.map(fld -> String.format("[%s] %s", fld.getField(), fld.getDefaultMessage()))
 			.toList();
@@ -60,10 +60,11 @@ public class ExceptionAdvice {
 	 * [파라미터 타입 불일치 예외] 쿼리 파라미터나 PathVariable의 타입 불일치 처리
 	 */
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
-	public ResponseEntity<ApiResponse<Object>> handleTypeMismatchException(MethodArgumentTypeMismatchException e) {
-		String message = String.format("%s 필드의 타입이 잘못되었습니다.", e.getName());
+	public ResponseEntity<ApiResponse<Object>> handleTypeMismatchException(
+		MethodArgumentTypeMismatchException exception) {
+		String message = String.format("%s 필드의 타입이 잘못되었습니다.", exception.getName());
 
-		log.warn("TypeMismatchException: {}", e.getMessage());
+		log.warn("TypeMismatchException: {}", exception.getMessage());
 
 		BaseErrorCode code = GeneralErrorCode.INVALID_PARAMETER;
 
@@ -77,10 +78,10 @@ public class ExceptionAdvice {
 	 */
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadableException(
-		HttpMessageNotReadableException e) {
+		HttpMessageNotReadableException exception) {
 		BaseErrorCode code = GeneralErrorCode.INVALID_BODY_TYPE;
 
-		log.warn("HttpMessageNotReadableException: {}", e.getMessage());
+		log.warn("HttpMessageNotReadableException: {}", exception.getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
@@ -91,10 +92,10 @@ public class ExceptionAdvice {
 	 * [JPA 필드 참조 예외] JPA에서 sort나 검색시 존재하지 않는 필드명 처리
 	 */
 	@ExceptionHandler(PropertyReferenceException.class)
-	public ResponseEntity<ApiResponse<Object>> handlePropertyReferenceException(PropertyReferenceException e) {
+	public ResponseEntity<ApiResponse<Object>> handlePropertyReferenceException(PropertyReferenceException exception) {
 		BaseErrorCode code = GeneralErrorCode.INVALID_PARAMETER;
 
-		log.warn("PropertyReferenceException: {}", e.getMessage());
+		log.warn("PropertyReferenceException: {}", exception.getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
@@ -106,10 +107,10 @@ public class ExceptionAdvice {
 	 */
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolationException(
-		DataIntegrityViolationException e) {
+		DataIntegrityViolationException exception) {
 		BaseErrorCode code = GeneralErrorCode.DUPLICATE_RESOURCE;
 
-		log.warn("DataIntegrityViolationException: {}", e.getMessage());
+		log.warn("DataIntegrityViolationException: {}", exception.getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
@@ -120,14 +121,15 @@ public class ExceptionAdvice {
 	 * [Bean Validation 예외] @NotNull, @Min 등 Bean Validation 제약 조건 위반 처리
 	 */
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<ApiResponse<Object>> handleConstraintViolationException(ConstraintViolationException e) {
-		var errors = e.getConstraintViolations().stream()
+	public ResponseEntity<ApiResponse<Object>> handleConstraintViolationException(
+		ConstraintViolationException exception) {
+		var errors = exception.getConstraintViolations().stream()
 			.map(v -> String.format("[%s] %s", v.getPropertyPath().toString(), v.getMessage()))
 			.toList();
 
 		BaseErrorCode code = GeneralErrorCode.INVALID_PARAMETER;
 
-		log.warn("ConstraintViolationException: {}", e.getMessage());
+		log.warn("ConstraintViolationException: {}", exception.getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
@@ -138,10 +140,10 @@ public class ExceptionAdvice {
 	 * [API 경로 없음 예외] 존재하지 않는 API 경로 요청 처리
 	 */
 	@ExceptionHandler(NoHandlerFoundException.class)
-	public ResponseEntity<ApiResponse<Object>> handleNoHandlerFoundException(NoHandlerFoundException e) {
+	public ResponseEntity<ApiResponse<Object>> handleNoHandlerFoundException(NoHandlerFoundException exception) {
 		BaseErrorCode code = GeneralErrorCode.API_NOT_FOUND;
 
-		log.warn("NoHandlerFoundException: {}", e.getMessage());
+		log.warn("NoHandlerFoundException: {}", exception.getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
@@ -153,10 +155,10 @@ public class ExceptionAdvice {
 	 */
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<ApiResponse<Object>> handleHttpRequestMethodNotSupportedException(
-		HttpRequestMethodNotSupportedException e) {
+		HttpRequestMethodNotSupportedException exception) {
 		BaseErrorCode code = GeneralErrorCode.METHOD_NOT_ALLOWED;
 
-		log.warn("HttpRequestMethodNotSupportedException: {}", e.getMessage());
+		log.warn("HttpRequestMethodNotSupportedException: {}", exception.getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
@@ -167,10 +169,10 @@ public class ExceptionAdvice {
 	 * [최상위 예외] 위의 예외를 제외한 모든 예외를 처리
 	 */
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ApiResponse<Object>> handleException(Exception e) {
+	public ResponseEntity<ApiResponse<Object>> handleException(Exception exception) {
 		BaseErrorCode code = GeneralErrorCode.INTERNAL_SERVER_ERROR;
 
-		log.error("Exception: {}", e.getMessage());
+		log.error("Exception: {}", exception.getMessage());
 
 		return ResponseEntity
 			.status(code.getHttpStatus())
