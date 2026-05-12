@@ -1,13 +1,13 @@
 package com.ceos.vote.domain.auth.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ceos.vote.domain.auth.dto.request.CheckEmailRequest;
+import com.ceos.vote.domain.auth.dto.request.CheckUsernameRequest;
 import com.ceos.vote.domain.auth.dto.request.UserLoginRequest;
 import com.ceos.vote.domain.auth.dto.request.UserSignUpRequest;
 import com.ceos.vote.domain.auth.dto.response.LoginResponse;
@@ -30,20 +30,20 @@ public class AuthController {
 	private final AuthService authService;
 
 	@Operation(summary = "아이디 중복 확인", description = "사용 가능한 아이디인지 확인합니다.")
-	@GetMapping("/check-username")
+	@PostMapping("/check-username")
 	public ResponseEntity<ApiResponse<Boolean>> checkUsername(
-		@RequestParam String username
+		@Valid @RequestBody CheckUsernameRequest request
 	) {
-		boolean isAvailable = authService.isUsernameAvailable(username);
+		boolean isAvailable = authService.isUsernameAvailable(request.username());
 		return ResponseEntity.ok(ApiResponse.onSuccess("아이디 사용 가능 여부 조회 성공", isAvailable));
 	}
 
 	@Operation(summary = "이메일 중복 확인", description = "사용 가능한 이메일인지 확인합니다.")
-	@GetMapping("/check-email")
+	@PostMapping("/check-email")
 	public ResponseEntity<ApiResponse<Boolean>> checkEmail(
-		@RequestParam String email
+		@Valid @RequestBody CheckEmailRequest request
 	) {
-		boolean isAvailable = authService.isEmailAvailable(email);
+		boolean isAvailable = authService.isEmailAvailable(request.email());
 		return ResponseEntity.ok(ApiResponse.onSuccess("이메일 사용 가능 여부 조회 성공", isAvailable));
 	}
 
