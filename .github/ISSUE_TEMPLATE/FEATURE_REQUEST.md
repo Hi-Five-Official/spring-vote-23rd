@@ -1,5 +1,5 @@
 ---
-name: Ditda Issue Template
+name: CEOS-VOTE Issue Template
 about: 기능 추가에 대한 작업 사항을 적습니다
 title: "[FEATURE] 제목"
 labels: ''

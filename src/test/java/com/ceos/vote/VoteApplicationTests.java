@@ -1,10 +1,10 @@
-package com.ceos.vote_service;
+package com.ceos.vote;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class VoteServiceApplicationTests {
+class VoteApplicationTests {
 
 	@Test
 	void contextLoads() {
