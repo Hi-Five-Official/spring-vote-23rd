@@ -1,3 +1,17 @@
 spring:
   application:
     name: vote-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/vote_service?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: vote
+    password: vote1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
