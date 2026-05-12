@@ -9,6 +9,12 @@ spring:
         default_batch_fetch_size: 100
     show-sql: true
 
+jwt:
+  secret: "ozlaIbMmUTFPcg-RPMPC9KQZjk8LuGEJZGHcnvqu4wM"
+  access-token-expiration: 3600000
+  cookie-secure: false
+
+
 
 swagger:
   server-url: http://localhost:8080
