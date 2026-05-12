@@ -2,10 +2,13 @@ spring:
   application:
     name: vote-service
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  config:
+    import: optional:file:.env[.properties]
 
   datasource:
-    url: jdbc:mysql://localhost:3306/vote_service?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: vote
-    password: vote1234
+    url: jdbc:mysql://${DB_HOST}/${DB_NAME}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
