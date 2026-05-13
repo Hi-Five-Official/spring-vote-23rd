@@ -6,10 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ceos.vote.domain.auth.dto.request.UserLoginRequest;
-import com.ceos.vote.domain.auth.dto.request.UserSignUpRequest;
+import com.ceos.vote.domain.auth.dto.request.LoginRequest;
+import com.ceos.vote.domain.auth.dto.request.SignUpRequest;
 import com.ceos.vote.domain.auth.dto.response.LoginResponse;
-import com.ceos.vote.domain.auth.dto.response.SignUpResponse;
 import com.ceos.vote.domain.team.entity.Team;
 import com.ceos.vote.domain.team.exception.TeamErrorCode;
 import com.ceos.vote.domain.team.repository.TeamRepository;
@@ -35,21 +34,26 @@ public class AuthService {
 	private final CookieUtils cookieUtils;
 
 	@Transactional(readOnly = true)
-	public boolean isUsernameAvailable(String username) {
+	public void validateUsernameAvailable(String username) {
 
-		return !userRepository.existsByUsername(username);
+		if (userRepository.existsByUsername(username)) {
+			throw new GeneralException(UserErrorCode.USERNAME_ALREADY_EXISTS);
+		}
 	}
 
 	@Transactional(readOnly = true)
-	public boolean isEmailAvailable(String email) {
+	public void validateEmailAvailable(String email) {
 
-		return !userRepository.existsByEmail(email);
+		if (userRepository.existsByEmail(email)) {
+			throw new GeneralException(UserErrorCode.EMAIL_ALREADY_EXISTS);
+		}
 	}
 
 	@Transactional
-	public SignUpResponse signup(UserSignUpRequest request, HttpServletResponse response) {
+	public void signup(SignUpRequest request, HttpServletResponse response) {
 
-		validateUsernameAndEmail(request.username(), request.email());
+		validateUsernameAvailable(request.username());
+		validateEmailAvailable(request.email());
 
 		Team team = teamRepository.findByName(request.team())
 			.orElseThrow(() -> new GeneralException(TeamErrorCode.TEAM_NOT_FOUND));
@@ -66,12 +70,10 @@ public class AuthService {
 		User saved = userRepository.save(user);
 
 		issueAccessTokenCookie(saved.getId(), response);
-
-		return SignUpResponse.from(saved);
 	}
 
 	@Transactional(readOnly = true)
-	public LoginResponse login(UserLoginRequest request, HttpServletResponse response) {
+	public LoginResponse login(LoginRequest request, HttpServletResponse response) {
 
 		User user = userRepository.findByUsername(request.username())
 			.orElseThrow(() -> new GeneralException(GeneralErrorCode.INVALID_LOGIN));
@@ -89,16 +91,6 @@ public class AuthService {
 
 		ResponseCookie cookie = cookieUtils.deleteAccessTokenCookie();
 		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-	}
-
-	private void validateUsernameAndEmail(String username, String email) {
-		if (userRepository.existsByUsername(username)) {
-			throw new GeneralException(UserErrorCode.USERNAME_ALREADY_EXISTS);
-		}
-
-		if (userRepository.existsByEmail(email)) {
-			throw new GeneralException(UserErrorCode.EMAIL_ALREADY_EXISTS);
-		}
 	}
 
 	private void issueAccessTokenCookie(Long userId, HttpServletResponse response) {
