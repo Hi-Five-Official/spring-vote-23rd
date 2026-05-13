@@ -72,3 +72,6 @@ reviews:
     swiftlint: { enabled: false }
     phpstan: { enabled: false }
     golangci-lint: { enabled: false }
+
+chat:
+  auto_reply: false
