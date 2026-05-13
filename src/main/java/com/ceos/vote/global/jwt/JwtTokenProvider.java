@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -30,7 +31,14 @@ public class JwtTokenProvider {
 	@Value("${jwt.access-token-expiration}")
 	private Long accessTokenExpiration;
 
+	@Value("${jwt.refresh-token-expiration}")
+	private Long refreshTokenExpiration;
+
 	private SecretKey key;
+
+	private static final String TOKEN_TYPE_CLAIM = "type";
+	private static final String ACCESS_TOKEN_TYPE = "access_token";
+	private static final String REFRESH_TOKEN_TYPE = "refresh_token";
 
 	@PostConstruct
 	public void init() {
@@ -44,13 +52,62 @@ public class JwtTokenProvider {
 
 		return Jwts.builder()
 			.subject(userId.toString())
+			.claim("type", "access_token")
 			.issuedAt(now)
 			.expiration(expiryTime)
 			.signWith(key, Jwts.SIG.HS256)
 			.compact();
 	}
 
-	public Claims validateToken(String token) {
+	public String generateRefreshToken(Long userId) {
+		Date now = new Date();
+		Date expiryTime = new Date(now.getTime() + refreshTokenExpiration);
+
+		return Jwts.builder()
+			.subject(userId.toString())
+			.claim("type", "refresh_token")
+			.issuedAt(now)
+			.expiration(expiryTime)
+			.signWith(key, Jwts.SIG.HS256)
+			.compact();
+	}
+
+	public Claims validateAccessToken(String token) {
+
+		Claims claims = validateToken(token);
+		if (!ACCESS_TOKEN_TYPE.equals(claims.get(TOKEN_TYPE_CLAIM, String.class))) {
+			throw new JwtException("Access Token이 아닙니다.");
+		}
+
+		return claims;
+	}
+
+	public Claims validateRefreshToken(String token) {
+
+		Claims claims = validateToken(token);
+		if (!REFRESH_TOKEN_TYPE.equals(claims.get(TOKEN_TYPE_CLAIM, String.class))) {
+			throw new JwtException("Refresh Token이 아닙니다.");
+		}
+
+		return claims;
+	}
+
+	public LocalDateTime getExpiration(String token) {
+		return getClaims(token).getExpiration()
+			.toInstant()
+			.atZone(ZoneId.systemDefault())
+			.toLocalDateTime();
+	}
+
+	private Claims getClaims(String token) {
+		return Jwts.parser()
+			.verifyWith(key)
+			.build()
+			.parseSignedClaims(token)
+			.getPayload();
+	}
+
+	private Claims validateToken(String token) {
 		try {
 			return getClaims(token);
 		} catch (ExpiredJwtException e) {
@@ -69,20 +126,5 @@ public class JwtTokenProvider {
 			log.warn("JWT 토큰이 비어있음: {}", e.getMessage());
 			throw e;
 		}
-	}
-
-	public LocalDateTime getExpiration(String token) {
-		return getClaims(token).getExpiration()
-			.toInstant()
-			.atZone(ZoneId.systemDefault())
-			.toLocalDateTime();
-	}
-
-	private Claims getClaims(String token) {
-		return Jwts.parser()
-			.verifyWith(key)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
 	}
 }

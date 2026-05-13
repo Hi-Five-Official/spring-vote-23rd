@@ -1,17 +1,17 @@
 package com.ceos.vote.domain.auth.dto.response;
 
-import com.ceos.vote.domain.user.entity.User;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "로그인 응답")
 public record LoginResponse(
 
 	@Schema(description = "로그인 유저 ID", example = "1")
-	Long userId
-) {
+	Long userId,
 
-	public static LoginResponse from(User user) {
-		return new LoginResponse(user.getId());
+	@Schema(description = "Access Token")
+	String accessToken
+) {
+	public static LoginResponse of(Long userId, String accessToken) {
+		return new LoginResponse(userId, accessToken);
 	}
 }
