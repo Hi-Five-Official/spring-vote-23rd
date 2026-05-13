@@ -96,8 +96,8 @@ jobs:
 
             echo ">>> Restarting containers"
             sudo docker compose up -d                       # 변경된 서비스만 재생성
-            sudo docker exec vote-service-nginx nginx -t \
-              && sudo docker exec vote-service-nginx nginx -s reload   # nginx.conf 변경 반영
+            sudo docker compose exec -T nginx nginx -t \
+              && sudo docker compose exec -T nginx nginx -s reload   # nginx.conf 변경 반영
 
             echo ">>> Waiting for app to be healthy"
             for i in $(seq 1 30); do
