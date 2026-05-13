@@ -59,6 +59,7 @@ public class SecurityConfig {
 			// api 접근 권한 설정
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				.requestMatchers("/actuator/health").permitAll()
 				.requestMatchers(HttpMethod.POST,
 					"/api/v1/auth/signup",
 					"/api/v1/auth/login",
