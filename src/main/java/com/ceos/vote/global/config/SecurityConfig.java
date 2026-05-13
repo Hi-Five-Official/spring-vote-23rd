@@ -59,6 +59,7 @@ public class SecurityConfig {
 			// api 접근 권한 설정
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				.requestMatchers("/actuator/health").permitAll()
 				.requestMatchers(HttpMethod.POST,
 					"/api/v1/auth/signup",
 					"/api/v1/auth/login",
@@ -77,7 +78,12 @@ public class SecurityConfig {
 		CorsConfiguration config = new CorsConfiguration();
 
 		config.setAllowCredentials(true);
-		config.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://localhost:5173"));
+		config.setAllowedOriginPatterns(List.of(
+			"http://localhost:3000",
+			"http://localhost:5173",
+			"https://crossbizz.cloud",
+			"https://www.crossbizz.cloud"
+			));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 
