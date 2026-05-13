@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "회원가입 요청")
-public record UserSignUpRequest(
+public record SignUpRequest(
 
 	@Schema(description = "파트", example = "BE")
 	@NotNull(message = "파트 선택은 필수입니다.")
