@@ -52,7 +52,7 @@ public class JwtTokenProvider {
 
 		return Jwts.builder()
 			.subject(userId.toString())
-			.claim("type", "access_token")
+			.claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
 			.issuedAt(now)
 			.expiration(expiryTime)
 			.signWith(key, Jwts.SIG.HS256)
@@ -65,7 +65,7 @@ public class JwtTokenProvider {
 
 		return Jwts.builder()
 			.subject(userId.toString())
-			.claim("type", "refresh_token")
+			.claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
 			.issuedAt(now)
 			.expiration(expiryTime)
 			.signWith(key, Jwts.SIG.HS256)
