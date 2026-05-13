@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -58,7 +59,12 @@ public class SecurityConfig {
 			// api 접근 권한 설정
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-				.requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login").permitAll()
+				.requestMatchers(HttpMethod.POST,
+					"/api/v1/auth/signup",
+					"/api/v1/auth/login",
+					"/api/v1/auth/check-username",
+					"/api/v1/auth/check-email"
+				).permitAll()
 				// ROLE 없이 인증되면 허가되는 식으로 진행
 				.anyRequest().authenticated()
 			)
