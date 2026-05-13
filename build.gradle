@@ -65,6 +65,10 @@ checkstyle {
     maxWarnings = 0
 }
 
+tasks.named('jar') {
+	enabled = false
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

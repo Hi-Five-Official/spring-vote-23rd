@@ -77,7 +77,12 @@ public class SecurityConfig {
 		CorsConfiguration config = new CorsConfiguration();
 
 		config.setAllowCredentials(true);
-		config.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://localhost:5173"));
+		config.setAllowedOriginPatterns(List.of(
+			"http://localhost:3000",
+			"http://localhost:5173",
+			"https://crossbizz.cloud",
+			"https://www.crossbizz.cloud"
+			));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 
