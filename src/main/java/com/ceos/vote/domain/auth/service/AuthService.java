@@ -90,20 +90,9 @@ public class AuthService {
 	}
 
 	@Transactional
-	public ResponseCookie logout(String refreshToken) {
+	public ResponseCookie logout(Long userId) {
 
-		if (refreshToken != null && !refreshToken.isBlank()) {
-			try {
-				Long userId = Long.parseLong(
-					jwtTokenProvider.validateRefreshToken(refreshToken).getSubject());
-				refreshTokenRepository.findByUserId(userId)
-					.filter(rt -> rt.getToken().equals(refreshToken))
-					.ifPresent(rt -> refreshTokenRepository.deleteByUserId(userId));
-			} catch (Exception ignored) {
-				// 만료/위조여도 클라이언트 쿠키 만료는 진행
-			}
-		}
-
+		refreshTokenRepository.deleteByUserId(userId);
 		return cookieUtils.deleteRefreshTokenCookie();
 	}
 
@@ -143,7 +132,7 @@ public class AuthService {
 			.ifPresentOrElse(
 				rt -> rt.rotate(refreshToken, expiresAt),
 				() -> refreshTokenRepository.save(
-					RefreshToken.of(userId, refreshToken, expiresAt))
+					RefreshToken.createRefreshToken(userRepository.getReferenceById(userId), refreshToken, expiresAt))
 			);
 
 		ResponseCookie cookie = cookieUtils.createRefreshTokenCookie(refreshToken);
