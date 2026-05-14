@@ -12,3 +12,25 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+  cookie-secure: ${JWT_COOKIE_SECURE}
+
+
+swagger:
+  server-url: ${SWAGGER_SERVER_URL}
+  server-description: ${SWAGGER_SERVER_DESCRIPTION}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
