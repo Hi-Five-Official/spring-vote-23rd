@@ -13,14 +13,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ceos.vote.global.jwt.JwtTokenProvider;
 import com.ceos.vote.global.jwt.exceptions.JwtErrorType;
-import com.ceos.vote.global.jwt.utils.CookieUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +42,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
 		if (StringUtils.hasText(token)) {
 			try {
-				Claims claims = jwtTokenProvider.validateToken(token);
+				Claims claims = jwtTokenProvider.validateAccessToken(token);
 				Long memberId = Long.parseLong(claims.getSubject());
 
 				Authentication authentication =
@@ -66,19 +64,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 	}
 
 	private String resolveToken(HttpServletRequest request) {
+
 		String bearerToken = request.getHeader("Authorization");
 
 		// Swagger & Postman 전용
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
 			return bearerToken.substring(7);
-		}
-
-		if (request.getCookies() != null) {
-			for (Cookie cookie : request.getCookies()) {
-				if (cookie.getName().equals(CookieUtils.ACCESS_TOKEN_COOKIE)) {
-					return cookie.getValue();
-				}
-			}
 		}
 
 		return null;
