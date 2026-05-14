@@ -24,7 +24,6 @@ swagger:
   server-url: ${SWAGGER_SERVER_URL}
   server-description: ${SWAGGER_SERVER_DESCRIPTION}
 
-
 management:
   endpoints:
     web:
@@ -35,3 +34,7 @@ management:
       show-details: never
       probes:
         enabled: true
+
+springdoc:
+  swagger-ui:
+    with-credentials: true
