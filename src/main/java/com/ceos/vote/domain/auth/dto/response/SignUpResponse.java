@@ -8,7 +8,4 @@ public record SignUpResponse(
 	@Schema(description = "Access Token")
 	String accessToken
 ) {
-	public static SignUpResponse of(String accessToken) {
-		return new SignUpResponse(accessToken);
-	}
 }

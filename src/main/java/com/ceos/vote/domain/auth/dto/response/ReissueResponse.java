@@ -8,7 +8,4 @@ public record ReissueResponse(
 	@Schema(description = "Access Token")
 	String accessToken
 ) {
-	public static ReissueResponse of(String accessToken) {
-		return new ReissueResponse(accessToken);
-	}
 }

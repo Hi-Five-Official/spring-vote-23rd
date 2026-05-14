@@ -11,7 +11,4 @@ public record LoginResponse(
 	@Schema(description = "Access Token")
 	String accessToken
 ) {
-	public static LoginResponse of(Long userId, String accessToken) {
-		return new LoginResponse(userId, accessToken);
-	}
 }

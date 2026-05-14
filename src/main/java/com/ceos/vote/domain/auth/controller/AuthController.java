@@ -2,6 +2,7 @@ package com.ceos.vote.domain.auth.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,7 +67,7 @@ public class AuthController {
 		response.addHeader(HttpHeaders.SET_COOKIE, result.refreshTokenCookie().toString());
 
 		return ApiResponse.onSuccess("회원가입 성공",
-			SignUpResponse.of(result.accessToken()));
+			new SignUpResponse(result.accessToken()));
 	}
 
 	@Operation(summary = "로그인", description = "아이디/비밀번호로 로그인합니다.")
@@ -80,18 +81,17 @@ public class AuthController {
 		response.addHeader(HttpHeaders.SET_COOKIE, result.refreshTokenCookie().toString());
 
 		return ApiResponse.onSuccess("로그인 성공",
-			LoginResponse.of(result.userId(), result.accessToken()));
+			new LoginResponse(result.userId(), result.accessToken()));
 	}
 
-	@Operation(summary = "로그아웃", description = "쿠키를 만료시켜 로그아웃 처리합니다.")
+	@Operation(summary = "로그아웃", description = "인증된 사용자의 토큰을 무효화합니다.")
 	@PostMapping("/logout")
 	public ApiResponse<Void> logout(
-		@Parameter(hidden = true)
-		@CookieValue(value = CookieUtils.REFRESH_TOKEN_COOKIE, required = false) String refreshToken,
+		@AuthenticationPrincipal Long userId,
 		HttpServletResponse response
 	) {
 
-		ResponseCookie deleted = authService.logout(refreshToken);
+		ResponseCookie deleted = authService.logout(userId);
 		response.addHeader(HttpHeaders.SET_COOKIE, deleted.toString());
 
 		return ApiResponse.onSuccess("로그아웃 성공");
@@ -108,6 +108,6 @@ public class AuthController {
 		response.addHeader(HttpHeaders.SET_COOKIE, result.refreshTokenCookie().toString());
 
 		return ApiResponse.onSuccess("토큰 재발급 성공",
-			ReissueResponse.of(result.accessToken()));
+			new ReissueResponse(result.accessToken()));
 	}
 }
