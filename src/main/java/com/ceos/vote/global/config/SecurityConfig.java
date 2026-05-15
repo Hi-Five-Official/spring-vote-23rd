@@ -64,7 +64,8 @@ public class SecurityConfig {
 					"/api/v1/auth/signup",
 					"/api/v1/auth/login",
 					"/api/v1/auth/check-username",
-					"/api/v1/auth/check-email"
+					"/api/v1/auth/check-email",
+					"/api/v1/auth/refresh"
 				).permitAll()
 				// ROLE 없이 인증되면 허가되는 식으로 진행
 				.anyRequest().authenticated()

@@ -1,14 +1,17 @@
 package com.ceos.vote.domain.auth.service;
 
-import org.springframework.http.HttpHeaders;
+import java.time.LocalDateTime;
+
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ceos.vote.domain.auth.dto.AuthResult;
 import com.ceos.vote.domain.auth.dto.request.LoginRequest;
 import com.ceos.vote.domain.auth.dto.request.SignUpRequest;
-import com.ceos.vote.domain.auth.dto.response.LoginResponse;
+import com.ceos.vote.domain.auth.entity.RefreshToken;
+import com.ceos.vote.domain.auth.repository.RefreshTokenRepository;
 import com.ceos.vote.domain.team.entity.Team;
 import com.ceos.vote.domain.team.exception.TeamErrorCode;
 import com.ceos.vote.domain.team.repository.TeamRepository;
@@ -20,7 +23,7 @@ import com.ceos.vote.global.apipayload.exception.GeneralException;
 import com.ceos.vote.global.jwt.JwtTokenProvider;
 import com.ceos.vote.global.jwt.utils.CookieUtils;
 
-import jakarta.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,6 +32,7 @@ public class AuthService {
 
 	private final UserRepository userRepository;
 	private final TeamRepository teamRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final CookieUtils cookieUtils;
@@ -50,7 +54,7 @@ public class AuthService {
 	}
 
 	@Transactional
-	public void signup(SignUpRequest request, HttpServletResponse response) {
+	public AuthResult signup(SignUpRequest request) {
 
 		validateUsernameAvailable(request.username());
 		validateEmailAvailable(request.email());
@@ -69,11 +73,11 @@ public class AuthService {
 
 		User saved = userRepository.save(user);
 
-		issueAccessTokenCookie(saved.getId(), response);
+		return issueTokens(saved.getId());
 	}
 
-	@Transactional(readOnly = true)
-	public LoginResponse login(LoginRequest request, HttpServletResponse response) {
+	@Transactional
+	public AuthResult login(LoginRequest request) {
 
 		User user = userRepository.findByUsername(request.username())
 			.orElseThrow(() -> new GeneralException(GeneralErrorCode.INVALID_LOGIN));
@@ -82,21 +86,56 @@ public class AuthService {
 			throw new GeneralException(GeneralErrorCode.INVALID_LOGIN);
 		}
 
-		issueAccessTokenCookie(user.getId(), response);
-
-		return LoginResponse.from(user);
+		return issueTokens(user.getId());
 	}
 
-	public void logout(HttpServletResponse response) {
+	@Transactional
+	public ResponseCookie logout(Long userId) {
 
-		ResponseCookie cookie = cookieUtils.deleteAccessTokenCookie();
-		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+		refreshTokenRepository.deleteByUserId(userId);
+		return cookieUtils.deleteRefreshTokenCookie();
 	}
 
-	private void issueAccessTokenCookie(Long userId, HttpServletResponse response) {
+	@Transactional
+	public AuthResult reissue(String refreshToken) {
 
-		String token = jwtTokenProvider.generateAccessToken(userId);
-		ResponseCookie cookie = cookieUtils.createAccessTokenCookie(token);
-		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+		if (refreshToken == null || refreshToken.isBlank()) {
+			throw new GeneralException(GeneralErrorCode.INVALID_TOKEN);
+		}
+
+		Long userId;
+		try {
+			userId = Long.parseLong(
+				jwtTokenProvider.validateRefreshToken(refreshToken).getSubject());
+		} catch (JwtException | IllegalArgumentException exception) {
+			throw new GeneralException(GeneralErrorCode.INVALID_TOKEN);
+		}
+
+		RefreshToken stored = refreshTokenRepository.findByUserId(userId)
+			.orElseThrow(() -> new GeneralException(GeneralErrorCode.INVALID_TOKEN));
+
+		if (!stored.getToken().equals(refreshToken)) {
+			throw new GeneralException(GeneralErrorCode.INVALID_TOKEN);
+		}
+
+		return issueTokens(userId);
+	}
+
+	private AuthResult issueTokens(Long userId) {
+
+		String accessToken = jwtTokenProvider.generateAccessToken(userId);
+		String refreshToken = jwtTokenProvider.generateRefreshToken(userId);
+
+		LocalDateTime expiresAt = jwtTokenProvider.getExpiration(refreshToken);
+
+		refreshTokenRepository.findByUserId(userId)
+			.ifPresentOrElse(
+				rt -> rt.rotate(refreshToken, expiresAt),
+				() -> refreshTokenRepository.save(
+					RefreshToken.createRefreshToken(userRepository.getReferenceById(userId), refreshToken, expiresAt))
+			);
+
+		ResponseCookie cookie = cookieUtils.createRefreshTokenCookie(refreshToken);
+		return new AuthResult(userId, accessToken, cookie);
 	}
 }
