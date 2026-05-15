@@ -38,3 +38,5 @@ management:
 springdoc:
   swagger-ui:
     with-credentials: true
+
+ser

@@ -83,7 +83,8 @@ public class SecurityConfig {
 			"http://localhost:3000",
 			"http://localhost:5173",
 			"https://crossbizz.cloud",
-			"https://www.crossbizz.cloud"
+			"https://www.crossbizz.cloud",
+			"https://api.crossbizz.cloud"
 			));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
