@@ -39,4 +39,5 @@ springdoc:
   swagger-ui:
     with-credentials: true
 
-ser
+server:
+  forward-headers-strategy: native
