@@ -100,17 +100,12 @@ jobs:
               && sudo docker compose exec -T nginx nginx -s reload   # nginx.conf 변경 반영
 
             echo ">>> Waiting for app to be healthy"
-            for i in $(seq 1 30); do
-              if curl --connect-timeout 2 --max-time 3 -fs -fs http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
-                echo "Healthy!"; break
-              fi
-              if [ $i -eq 30 ]; then
-                echo ">>> Health check failed. Dumping logs:"
-                sudo docker compose logs --tail=100
-                exit 1
-              fi
-              sleep 2
-            done
+            if ! sudo docker compose up -d --wait --wait-timeout 300; then
+              echo ">>> One or more services failed to become healthy"
+              sudo docker compose ps
+              sudo docker compose logs --tail=200
+              exit 1
+            fi
 
 
             sudo docker image prune -f
