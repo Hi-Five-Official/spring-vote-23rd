@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ceos.vote.domain.candidate.dto.response.CandidateResponse;
+import com.ceos.vote.domain.candidate.dto.response.CandidateListResponse;
 import com.ceos.vote.domain.candidate.service.CandidateService;
 import com.ceos.vote.domain.user.entity.enums.Part;
 import com.ceos.vote.global.apipayload.response.ApiResponse;
@@ -25,11 +25,11 @@ public class CandidateController {
 
 	@Operation(summary = "팀별 팀원 조회", description = "각 팀에 속한 팀원을 조회합니다.")
 	@GetMapping("/teams/{teamId}/candidates")
-	public ApiResponse<CandidateResponse> getTeamCandidates(
+	public ApiResponse<CandidateListResponse> getTeamCandidates(
 		@PathVariable Long teamId,
 		@RequestParam Part part
 	) {
-		CandidateResponse response = candidateService.getByTeamIdAndPart(teamId, part);
+		CandidateListResponse response = candidateService.getByTeamIdAndPart(teamId, part);
 
 		return ApiResponse.onSuccess("팀별 팀원 조회 성공", response);
 	}

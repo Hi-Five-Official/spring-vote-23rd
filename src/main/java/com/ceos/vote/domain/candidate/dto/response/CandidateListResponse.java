@@ -7,14 +7,14 @@ import com.ceos.vote.domain.candidate.entity.Candidate;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "팀별 팀원 응답")
-public record CandidateResponse(
+public record CandidateListResponse(
 
 	@Schema(description = "팀원 배열")
 	List<CandidateInfo> candidates
 ) {
 
-	public static CandidateResponse from(List<Candidate> candidates) {
-		return new CandidateResponse(
+	public static CandidateListResponse from(List<Candidate> candidates) {
+		return new CandidateListResponse(
 			candidates.stream()
 				.map(CandidateInfo::from)
 				.toList()
