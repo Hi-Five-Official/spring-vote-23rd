@@ -16,13 +16,13 @@ spring:
 jwt:
   secret: ${JWT_SECRET_KEY}
   access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+  refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION}
   cookie-secure: ${JWT_COOKIE_SECURE}
-
+  refresh-cookie-path: ${JWT_REFRESH_COOKIE_PATH}
 
 swagger:
   server-url: ${SWAGGER_SERVER_URL}
   server-description: ${SWAGGER_SERVER_DESCRIPTION}
-
 
 management:
   endpoints:
@@ -34,3 +34,10 @@ management:
       show-details: never
       probes:
         enabled: true
+
+springdoc:
+  swagger-ui:
+    with-credentials: true
+
+server:
+  forward-headers-strategy: native

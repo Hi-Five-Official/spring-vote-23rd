@@ -67,6 +67,8 @@ public class SecurityConfig {
 					"/api/v1/auth/check-email",
 					"/api/v1/auth/refresh"
 				).permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/v1/teams").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/v1/teams/{teamId}/candidates").permitAll()
 				// ROLE 없이 인증되면 허가되는 식으로 진행
 				.anyRequest().authenticated()
 			)
@@ -83,7 +85,8 @@ public class SecurityConfig {
 			"http://localhost:3000",
 			"http://localhost:5173",
 			"https://crossbizz.cloud",
-			"https://www.crossbizz.cloud"
+			"https://www.crossbizz.cloud",
+			"https://api.crossbizz.cloud"
 			));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
