@@ -7,7 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ceos.vote.domain.team.dto.response.TeamResponse;
 import com.ceos.vote.domain.team.entity.Team;
+import com.ceos.vote.domain.team.exception.TeamErrorCode;
 import com.ceos.vote.domain.team.repository.TeamRepository;
+import com.ceos.vote.global.apipayload.exception.GeneralException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,5 +24,11 @@ public class TeamService {
 		List<Team> teams = teamRepository.findAll();
 
 		return TeamResponse.from(teams);
+	}
+
+	public void validateTeamExists(Long teamId) {
+		if (!teamRepository.existsById(teamId)) {
+			throw new GeneralException(TeamErrorCode.TEAM_NOT_FOUND);
+		}
 	}
 }
