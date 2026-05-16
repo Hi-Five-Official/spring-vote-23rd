@@ -8,13 +8,13 @@ import com.ceos.vote.domain.team.entity.enums.TeamName;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "팀명 응답")
-public record TeamResponse(
+public record TeamListResponse(
 
 	@Schema(description = "팀 배열")
 	List<TeamInfo> teams
 ) {
-	public static TeamResponse from(List<Team> teams) {
-		return new TeamResponse(
+	public static TeamListResponse from(List<Team> teams) {
+		return new TeamListResponse(
 			teams.stream()
 				.map(TeamInfo::from)
 				.toList()

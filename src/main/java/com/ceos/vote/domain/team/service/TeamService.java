@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ceos.vote.domain.team.dto.response.TeamResponse;
+import com.ceos.vote.domain.team.dto.response.TeamListResponse;
 import com.ceos.vote.domain.team.entity.Team;
 import com.ceos.vote.domain.team.exception.TeamErrorCode;
 import com.ceos.vote.domain.team.repository.TeamRepository;
@@ -20,10 +20,10 @@ public class TeamService {
 
 	private final TeamRepository teamRepository;
 
-	public TeamResponse getTeams() {
+	public TeamListResponse getTeams() {
 		List<Team> teams = teamRepository.findAll();
 
-		return TeamResponse.from(teams);
+		return TeamListResponse.from(teams);
 	}
 
 	public void validateTeamExists(Long teamId) {
