@@ -9,7 +9,7 @@ import com.ceos.vote.domain.candidate.dto.response.CandidateListResponse;
 import com.ceos.vote.domain.candidate.entity.Candidate;
 import com.ceos.vote.domain.candidate.repository.CandidateRepository;
 import com.ceos.vote.domain.team.service.TeamService;
-import com.ceos.vote.domain.user.entity.enums.Part;
+import com.ceos.vote.global.entity.enums.Part;
 
 import lombok.RequiredArgsConstructor;
 

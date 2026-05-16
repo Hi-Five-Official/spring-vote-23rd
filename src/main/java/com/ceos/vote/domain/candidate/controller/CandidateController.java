@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ceos.vote.domain.candidate.dto.response.CandidateListResponse;
 import com.ceos.vote.domain.candidate.service.CandidateService;
-import com.ceos.vote.domain.user.entity.enums.Part;
 import com.ceos.vote.global.apipayload.response.ApiResponse;
+import com.ceos.vote.global.entity.enums.Part;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

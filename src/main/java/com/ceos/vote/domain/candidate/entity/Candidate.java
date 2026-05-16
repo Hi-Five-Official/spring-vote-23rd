@@ -1,7 +1,7 @@
 package com.ceos.vote.domain.candidate.entity;
 
 import com.ceos.vote.domain.team.entity.Team;
-import com.ceos.vote.domain.user.entity.enums.Part;
+import com.ceos.vote.global.entity.enums.Part;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

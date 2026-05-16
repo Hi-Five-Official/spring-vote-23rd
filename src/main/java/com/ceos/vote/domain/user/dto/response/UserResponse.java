@@ -2,7 +2,7 @@ package com.ceos.vote.domain.user.dto.response;
 
 import com.ceos.vote.domain.team.entity.enums.TeamName;
 import com.ceos.vote.domain.user.entity.User;
-import com.ceos.vote.domain.user.entity.enums.Part;
+import com.ceos.vote.global.entity.enums.Part;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
