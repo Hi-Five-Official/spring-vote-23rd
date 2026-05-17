@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "파트장 투표 결과 조회 응답")
-public record CandidateVoteResultListResponse (
+public record CandidateVoteResultListResponse(
 
 	@Schema(description = "파트장 투표 결과 배열")
 	List<CandidateVoteResultInfo> candidates
-){
+) {
 
 	public static CandidateVoteResultListResponse from(List<CandidateVoteResultInfo> candidates) {
 		return new CandidateVoteResultListResponse(candidates);
