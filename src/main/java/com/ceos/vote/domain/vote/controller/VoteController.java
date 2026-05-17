@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ceos.vote.domain.vote.dto.request.CandidateVoteRequest;
+import com.ceos.vote.domain.vote.dto.request.TeamVoteRequest;
 import com.ceos.vote.domain.vote.service.VoteService;
 import com.ceos.vote.global.apipayload.response.ApiResponse;
 
@@ -33,4 +34,13 @@ public class VoteController {
 		return ApiResponse.onSuccess("파트장 투표 성공");
 	}
 
+	@Operation(summary = "데모데이 팀 투표", description = "데모데이 팀을 투표합니다. (1인 1팀)")
+	@PostMapping("/teams")
+	public ApiResponse<Void> voteTeam(
+		@AuthenticationPrincipal Long userId,
+		@Valid @RequestBody TeamVoteRequest request
+	) {
+		voteService.voteTeam(userId, request.teamId());
+		return ApiResponse.onSuccess("팀 투표 성공");
+	}
 }
