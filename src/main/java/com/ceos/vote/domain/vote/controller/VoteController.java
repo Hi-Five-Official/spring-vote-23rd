@@ -30,7 +30,7 @@ public class VoteController {
 
 	private final VoteService voteService;
 
-	@Operation(summary = "파트장 투표", description = "FE/BE 각 파트의 파트장을 투표합니다. (FE/BE 1표씩 가능)")
+	@Operation(summary = "파트장 투표", description = "**[파트장 투표]** FE/BE 각 파트의 파트장을 투표합니다. (FE/BE 1표씩 가능)")
 	@PostMapping("/candidates")
 	public ApiResponse<Void> voteCandidate(
 		@AuthenticationPrincipal Long userId,
@@ -40,7 +40,7 @@ public class VoteController {
 		return ApiResponse.onSuccess("파트장 투표 성공");
 	}
 
-	@Operation(summary = "데모데이 팀 투표", description = "데모데이 팀을 투표합니다. (1인 1팀)")
+	@Operation(summary = "데모데이 팀 투표", description = "**[팀 투표]** 데모데이 팀을 투표합니다. (1인 1팀)")
 	@PostMapping("/teams")
 	public ApiResponse<Void> voteTeam(
 		@AuthenticationPrincipal Long userId,
@@ -50,7 +50,7 @@ public class VoteController {
 		return ApiResponse.onSuccess("팀 투표 성공");
 	}
 
-	@Operation(summary = "팀 투표 결과", description = "팀 투표 결과를 조회합니다.")
+	@Operation(summary = "팀 투표 결과", description = "**[팀 투표 결과]** 팀 투표 결과를 조회합니다.")
 	@GetMapping("/teams/results")
 	public ApiResponse<TeamVoteResultListResponse> getTeamVoteResults(
 		@AuthenticationPrincipal Long userId
@@ -60,7 +60,7 @@ public class VoteController {
 		return ApiResponse.onSuccess("팀 투표 결과 조회 성공", response);
 	}
 
-	@Operation(summary = "파트장 투표 결과", description = "파트장 투표 결과를 조회합니다.")
+	@Operation(summary = "파트장 투표 결과", description = "**[파트장 투표 결과]** 파트장 투표 결과를 조회합니다.")
 	@GetMapping("/candidates/results")
 	public ApiResponse<CandidateVoteResultListResponse> getCandidateVoteResults(
 		@Parameter(description = "파트 구분") @RequestParam Part part,

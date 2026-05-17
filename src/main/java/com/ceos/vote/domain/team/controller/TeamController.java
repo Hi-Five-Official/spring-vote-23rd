@@ -29,14 +29,14 @@ public class TeamController {
 	private final TeamService teamService;
 	private final CandidateService candidateService;
 
-	@Operation(summary = "팀 조회", description = "팀 이름을 조회합니다.")
+	@Operation(summary = "팀 조회", description = "**[회원가입]** 팀 이름을 조회합니다.")
 	@GetMapping
 	public ApiResponse<TeamListResponse> getTeams() {
 		TeamListResponse response = teamService.getTeams();
 		return ApiResponse.onSuccess("팀 조회 성공", response);
 	}
 
-	@Operation(summary = "팀별 팀원 조회", description = "각 팀에 속한 팀원을 조회합니다.")
+	@Operation(summary = "팀별 팀원 조회", description = "**[회원가입]** 각 팀에 속한 팀원을 조회합니다.")
 	@GetMapping("/{teamId}/candidates")
 	public ApiResponse<CandidateListResponse> getTeamCandidates(
 		@Parameter(description = "팀 ID", example = "1") @PathVariable Long teamId,
@@ -47,7 +47,7 @@ public class TeamController {
 		return ApiResponse.onSuccess("팀별 팀원 조회 성공", response);
 	}
 
-	@Operation(summary = "투표할 팀 조회", description = "투표 화면에서 사용할 팀 목록을 조회합니다.")
+	@Operation(summary = "팀 후보 조회", description = "**[팀 투표]** 팀 후보 목록을 조회합니다.")
 	@GetMapping("/voting")
 	public ApiResponse<TeamDetailListResponse> getTeamsForVoting(
 		@AuthenticationPrincipal Long userId

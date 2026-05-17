@@ -24,7 +24,7 @@ public class CandidateController {
 
 	private final CandidateService candidateService;
 
-	@Operation(summary = "파트장 후보 조회", description = "파트장 후보의 상세 내용을 조회합니다.")
+	@Operation(summary = "파트장 후보 조회", description = "**[파트장 투표]** 파트장 후보의 상세 내용을 조회합니다.")
 	@GetMapping("/voting")
 	public ApiResponse<CandidateDetailListResponse> getCandidatesForVoting(
 		@AuthenticationPrincipal Long userId,
