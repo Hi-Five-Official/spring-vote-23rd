@@ -14,9 +14,15 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
 	List<Candidate> findByTeamIdAndPart(Long teamId, Part part);
 
+	List<Candidate> findAllByOrderByIdAsc();
+
+	List<Candidate> findByPartOrderByIdAsc(Part part);
+
+	List<Candidate> findByPartOrderByVoteCountDescIdAsc(Part part);
+
 	@Modifying
 	@Query("UPDATE Candidate c "
 		+ "SET c.voteCount = c.voteCount + 1 "
-		+ "WHERE  c.id = :candidateId")
+		+ "WHERE c.id = :candidateId")
 	int increaseVoteCount(@Param("candidateId") Long candidateId);
 }

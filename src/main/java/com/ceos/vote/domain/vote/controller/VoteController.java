@@ -1,17 +1,23 @@
 package com.ceos.vote.domain.vote.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ceos.vote.domain.vote.dto.request.CandidateVoteRequest;
 import com.ceos.vote.domain.vote.dto.request.TeamVoteRequest;
+import com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse;
+import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse;
 import com.ceos.vote.domain.vote.service.VoteService;
 import com.ceos.vote.global.apipayload.response.ApiResponse;
+import com.ceos.vote.global.entity.enums.Part;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +48,26 @@ public class VoteController {
 	) {
 		voteService.voteTeam(userId, request.teamId());
 		return ApiResponse.onSuccess("팀 투표 성공");
+	}
+
+	@Operation(summary = "팀 투표 결과", description = "팀 투표 결과를 조회합니다.")
+	@GetMapping("/teams/results")
+	public ApiResponse<TeamVoteResultListResponse> getTeamVoteResults(
+		@AuthenticationPrincipal Long userId
+	) {
+
+		TeamVoteResultListResponse response = voteService.getTeamVoteResult(userId);
+		return ApiResponse.onSuccess("팀 투표 결과 조회 성공", response);
+	}
+
+	@Operation(summary = "파트장 투표 결과", description = "파트장 투표 결과를 조회합니다.")
+	@GetMapping("/candidates/results")
+	public ApiResponse<CandidateVoteResultListResponse> getCandidateVoteResults(
+		@Parameter(description = "파트 구분") @RequestParam Part part,
+		@AuthenticationPrincipal Long userId
+	) {
+
+		CandidateVoteResultListResponse response = voteService.getCandidateVoteResult(userId, part);
+		return ApiResponse.onSuccess("파트장 투표 결과 조회 성공", response);
 	}
 }
