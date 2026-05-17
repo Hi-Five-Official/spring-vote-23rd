@@ -30,7 +30,7 @@ public class VoteService {
 		Candidate candidate = candidateService.getById(candidateId);
 
 		// 중복 투표 검사
-		if (candidateVoteRepository.existsByUserIdAndPart(user.getId(), candidate.getPart())) {
+		if (candidateVoteRepository.existsByUserIdAndPart(userId, candidate.getPart())) {
 			throw new GeneralException(VoteErrorCode.ALREADY_VOTED);
 		}
 
