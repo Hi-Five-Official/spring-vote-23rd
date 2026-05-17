@@ -70,7 +70,7 @@ public class CandidateService {
 		return CandidateDetailListResponse.from(candidateInfos);
 	}
 
-	public List<Candidate> getRanking() {
-		return candidateRepository.findAllByOrderByVoteCountDescIdAsc();
+	public List<Candidate> getRanking(Part part) {
+		return candidateRepository.findByPartOrderByVoteCountDescIdAsc(part);
 	}
 }

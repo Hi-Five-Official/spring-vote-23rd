@@ -24,6 +24,7 @@ import com.ceos.vote.domain.vote.exception.VoteErrorCode;
 import com.ceos.vote.domain.vote.repository.CandidateVoteRepository;
 import com.ceos.vote.domain.vote.repository.TeamVoteRepository;
 import com.ceos.vote.global.apipayload.exception.GeneralException;
+import com.ceos.vote.global.entity.enums.Part;
 
 import lombok.RequiredArgsConstructor;
 
@@ -102,10 +103,10 @@ public class VoteService {
 		return TeamVoteResultListResponse.from(teamInfos);
 	}
 
-	public CandidateVoteResultListResponse getCandidateVoteResult(Long userId) {
+	public CandidateVoteResultListResponse getCandidateVoteResult(Long userId, Part part) {
 
 		// 파트장 후보 투표수 기준 내림차순
-		List<Candidate> candidates = candidateService.getRanking();
+		List<Candidate> candidates = candidateService.getRanking(part);
 
 		Set<Long> myVotedCandidateIds = Set.copyOf(
 			candidateVoteRepository.findVotedCandidateIdsByUserId(userId)
