@@ -56,4 +56,14 @@ public class VoteController {
 		TeamVoteResultListResponse response = voteService.getTeamVoteResult(userId);
 		return ApiResponse.onSuccess("팀 투표 결과 조회 성공", response);
 	}
+
+	@Operation(summary = "파트장 투표 결과", description = "파트장 투표 결과를 조회합니다.")
+	@GetMapping("candidates/results")
+	public ApiResponse<CandidateVoteResultListResponse> getCandidateVoteResults(
+		@AuthenticationPrincipal Long userId
+	) {
+
+		CandidateVoteResultListResponse response = voteService.getCandidateVoteResult(userId);
+		return ApiResponse.onSuccess("파트장 투표 결과 조회 성공", response);
+	}
 }

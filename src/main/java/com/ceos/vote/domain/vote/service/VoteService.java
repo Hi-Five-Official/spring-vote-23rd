@@ -102,4 +102,23 @@ public class VoteService {
 
 		return TeamVoteResultListResponse.from(teamInfos);
 	}
+
+	public CandidateVoteResultListResponse getCandidateVoteResult(Long userId) {
+
+		// 파트장 후보 투표수 기준 내림차순
+		List<Candidate> candidates = candidateService.getAllCandidatesOrderByVoteCountDesc();
+
+		Set<Long> myVotedCandidateIds = Set.copyOf(
+			candidateVoteRepository.findVotedCandidateIdsByUserId(userId)
+		);
+
+		List<CandidateVoteResultInfo> candidateInfos = candidates.stream()
+			.map(candidate -> CandidateVoteResultInfo.from(
+				candidate,
+				myVotedCandidateIds.contains(candidate.getId())
+			))
+			.toList();
+
+		return from(candidateInfos);
+	}
 }

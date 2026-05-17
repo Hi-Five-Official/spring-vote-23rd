@@ -69,4 +69,8 @@ public class CandidateService {
 
 		return CandidateDetailListResponse.from(candidateInfos);
 	}
+
+	public List<Candidate> getAllCandidatesOrderByVoteCountDesc() {
+		return candidateRepository.findAllByOrderByVoteCountDesc();
+	}
 }
