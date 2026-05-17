@@ -1,5 +1,11 @@
 package com.ceos.vote.domain.vote.service;
 
+import static com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse.*;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +16,9 @@ import com.ceos.vote.domain.team.entity.Team;
 import com.ceos.vote.domain.team.service.TeamService;
 import com.ceos.vote.domain.user.entity.User;
 import com.ceos.vote.domain.user.service.UserService;
+import com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse;
+import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse;
+import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse.TeamVoteResultInfo;
 import com.ceos.vote.domain.vote.entity.CandidateVote;
 import com.ceos.vote.domain.vote.entity.TeamVote;
 import com.ceos.vote.domain.vote.exception.VoteErrorCode;
@@ -72,5 +81,25 @@ public class VoteService {
 
 		// 팀 투표수 증가
 		teamService.incrementVoteCount(teamId);
+	}
+
+	public TeamVoteResultListResponse getTeamVoteResult(Long userId) {
+
+		// 팀 투표수 기준 내림차순
+		List<Team> teams = teamService.getAllTeamsOrderByVoteCountDesc();
+
+		// 투표 안했을경우 빈값
+		Long myVotedTeamId = teamVoteRepository.findVotedTeamIdByUserId(userId)
+			.orElse(null);
+
+		// 투표한 팀 있는지 조회
+		List<TeamVoteResultInfo> teamInfos = teams.stream()
+			.map(team -> TeamVoteResultInfo.from(
+				team,
+				Objects.equals(myVotedTeamId, team.getId())
+			))
+			.toList();
+
+		return TeamVoteResultListResponse.from(teamInfos);
 	}
 }

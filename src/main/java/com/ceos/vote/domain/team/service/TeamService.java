@@ -41,4 +41,8 @@ public class TeamService {
 	public void incrementVoteCount(Long teamId) {
 		teamRepository.increaseVoteCount(teamId);
 	}
+
+	public List<Team> getAllTeamsOrderByVoteCountDesc() {
+		return teamRepository.findAllByOrderByVoteCountDesc();
+	}
 }
