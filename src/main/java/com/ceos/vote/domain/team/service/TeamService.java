@@ -42,7 +42,7 @@ public class TeamService {
 		teamRepository.increaseVoteCount(teamId);
 	}
 
-	public List<Team> getAllTeamsOrderByVoteCountDesc() {
-		return teamRepository.findAllByOrderByVoteCountDesc();
+	public List<Team> getRanking() {
+		return teamRepository.findAllByOrderByVoteCountDescIdAsc();
 	}
 }

@@ -58,7 +58,7 @@ public class VoteController {
 	}
 
 	@Operation(summary = "파트장 투표 결과", description = "파트장 투표 결과를 조회합니다.")
-	@GetMapping("candidates/results")
+	@GetMapping("/candidates/results")
 	public ApiResponse<CandidateVoteResultListResponse> getCandidateVoteResults(
 		@AuthenticationPrincipal Long userId
 	) {

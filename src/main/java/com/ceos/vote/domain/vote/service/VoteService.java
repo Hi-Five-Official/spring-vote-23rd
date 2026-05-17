@@ -1,7 +1,5 @@
 package com.ceos.vote.domain.vote.service;
 
-import static com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse.*;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -17,6 +15,7 @@ import com.ceos.vote.domain.team.service.TeamService;
 import com.ceos.vote.domain.user.entity.User;
 import com.ceos.vote.domain.user.service.UserService;
 import com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse;
+import com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse.CandidateVoteResultInfo;
 import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse;
 import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse.TeamVoteResultInfo;
 import com.ceos.vote.domain.vote.entity.CandidateVote;
@@ -86,7 +85,7 @@ public class VoteService {
 	public TeamVoteResultListResponse getTeamVoteResult(Long userId) {
 
 		// 팀 투표수 기준 내림차순
-		List<Team> teams = teamService.getAllTeamsOrderByVoteCountDesc();
+		List<Team> teams = teamService.getRanking();
 
 		// 투표 안했을경우 빈값
 		Long myVotedTeamId = teamVoteRepository.findVotedTeamIdByUserId(userId)
@@ -106,7 +105,7 @@ public class VoteService {
 	public CandidateVoteResultListResponse getCandidateVoteResult(Long userId) {
 
 		// 파트장 후보 투표수 기준 내림차순
-		List<Candidate> candidates = candidateService.getAllCandidatesOrderByVoteCountDesc();
+		List<Candidate> candidates = candidateService.getRanking();
 
 		Set<Long> myVotedCandidateIds = Set.copyOf(
 			candidateVoteRepository.findVotedCandidateIdsByUserId(userId)
@@ -119,6 +118,6 @@ public class VoteService {
 			))
 			.toList();
 
-		return from(candidateInfos);
+		return CandidateVoteResultListResponse.from(candidateInfos);
 	}
 }

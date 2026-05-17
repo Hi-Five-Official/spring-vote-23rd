@@ -15,7 +15,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
 	Optional<Team> findByName(TeamName teamName);
 
-	List<Team> findAllByOrderByVoteCountDesc();
+	List<Team> findAllByOrderByVoteCountDescIdAsc();
 
 	@Modifying
 	@Query("UPDATE Team t "

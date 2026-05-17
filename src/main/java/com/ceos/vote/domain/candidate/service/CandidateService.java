@@ -48,12 +48,12 @@ public class CandidateService {
 		candidateRepository.increaseVoteCount(candidateId);
 	}
 
-	public CandidateDetailListResponse getDetails(Long userId, Part part) {
+	public CandidateDetailListResponse getCandidatesForVoting(Long userId, Part part) {
 
 		// 파트 확인. 파트 없을 시 전체 조회
 		List<Candidate> candidates = (part == null)
-			? candidateRepository.findAll()
-			: candidateRepository.findByPart(part);
+			? candidateRepository.findAllByOrderByIdAsc()
+			: candidateRepository.findByPartOrderByIdAsc(part);
 
 		// 유저가 이미 투표한 후보 id 조회
 		Set<Long> myVotedCandidateIds = Set.copyOf(
@@ -70,7 +70,7 @@ public class CandidateService {
 		return CandidateDetailListResponse.from(candidateInfos);
 	}
 
-	public List<Candidate> getAllCandidatesOrderByVoteCountDesc() {
-		return candidateRepository.findAllByOrderByVoteCountDesc();
+	public List<Candidate> getRanking() {
+		return candidateRepository.findAllByOrderByVoteCountDescIdAsc();
 	}
 }
