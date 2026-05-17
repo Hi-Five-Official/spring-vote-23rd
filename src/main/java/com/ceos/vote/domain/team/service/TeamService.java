@@ -31,4 +31,14 @@ public class TeamService {
 			throw new GeneralException(TeamErrorCode.TEAM_NOT_FOUND);
 		}
 	}
+
+	public Team getById(Long teamId) {
+		return teamRepository.findById(teamId)
+			.orElseThrow(() -> new GeneralException(TeamErrorCode.TEAM_NOT_FOUND));
+	}
+
+	@Transactional
+	public void incrementVoteCount(Long teamId) {
+		teamRepository.increaseVoteCount(teamId);
+	}
 }
