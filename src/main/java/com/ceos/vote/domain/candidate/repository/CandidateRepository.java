@@ -14,6 +14,8 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
 	List<Candidate> findByTeamIdAndPart(Long teamId, Part part);
 
+	List<Candidate> findByPart(Part part);
+
 	@Modifying
 	@Query("UPDATE Candidate c "
 		+ "SET c.voteCount = c.voteCount + 1 "
