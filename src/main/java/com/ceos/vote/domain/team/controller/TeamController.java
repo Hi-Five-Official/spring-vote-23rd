@@ -1,5 +1,6 @@
 package com.ceos.vote.domain.team.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ceos.vote.domain.candidate.dto.response.CandidateListResponse;
 import com.ceos.vote.domain.candidate.service.CandidateService;
+import com.ceos.vote.domain.team.dto.response.TeamDetailListResponse;
 import com.ceos.vote.domain.team.dto.response.TeamListResponse;
 import com.ceos.vote.domain.team.service.TeamService;
 import com.ceos.vote.global.apipayload.response.ApiResponse;
@@ -43,6 +45,15 @@ public class TeamController {
 		CandidateListResponse response = candidateService.getByTeamIdAndPart(teamId, part);
 
 		return ApiResponse.onSuccess("팀별 팀원 조회 성공", response);
+	}
+
+	@Operation(summary = "투표할 팀 조회", description = "투표 화면에서 사용할 팀 목록을 조회합니다.")
+	@GetMapping("/voting")
+	public ApiResponse<TeamDetailListResponse> getTeamsForVoting(
+		@AuthenticationPrincipal Long userId
+	) {
+		TeamDetailListResponse response = teamService.getTeamsForVoting(userId);
+		return ApiResponse.onSuccess("투표할 팀 조회 성공", response);
 	}
 
 }
