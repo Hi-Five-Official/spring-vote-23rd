@@ -1,5 +1,6 @@
 package com.ceos.vote.domain.vote.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +42,11 @@ public class VoteService {
 		}
 
 		// 투표 저장
-		candidateVoteRepository.save(CandidateVote.of(user, candidate));
+		try {
+			candidateVoteRepository.save(CandidateVote.of(user, candidate));
+		} catch (DataIntegrityViolationException e) {
+			throw new GeneralException(VoteErrorCode.ALREADY_VOTED);
+		}
 
 		// 후보 투표수 증가
 		candidateService.incrementVoteCount(candidateId);
@@ -59,7 +64,11 @@ public class VoteService {
 		}
 
 		// 투표 저장
-		teamVoteRepository.save(TeamVote.of(user, team));
+		try {
+			teamVoteRepository.save(TeamVote.of(user, team));
+		} catch (DataIntegrityViolationException e) {
+			throw new GeneralException(VoteErrorCode.ALREADY_VOTED);
+		}
 
 		// 팀 투표수 증가
 		teamService.incrementVoteCount(teamId);
