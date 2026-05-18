@@ -1,7 +1,6 @@
 package com.ceos.vote.domain.team.dto.response;
 
 import java.util.List;
-import java.util.Objects;
 
 import com.ceos.vote.domain.team.entity.Team;
 import com.ceos.vote.domain.team.entity.enums.TeamName;
@@ -16,14 +15,8 @@ public record TeamDetailListResponse(
 	List<TeamDetailInfo> teams
 ) {
 
-	public static TeamDetailListResponse from(List<Team> teams, Long myVotedTeamId) {
-		List<TeamDetailInfo> infos = teams.stream()
-			.map(team -> TeamDetailInfo.from(
-				team,
-				Objects.equals(myVotedTeamId, team.getId())
-			))
-			.toList();
-		return new TeamDetailListResponse(infos);
+	public static TeamDetailListResponse from(List<TeamDetailInfo> teams) {
+		return new TeamDetailListResponse(teams);
 	}
 
 	public record TeamDetailInfo(

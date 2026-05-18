@@ -1,11 +1,13 @@
 package com.ceos.vote.domain.team.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ceos.vote.domain.team.dto.response.TeamDetailListResponse;
+import com.ceos.vote.domain.team.dto.response.TeamDetailListResponse.TeamDetailInfo;
 import com.ceos.vote.domain.team.dto.response.TeamListResponse;
 import com.ceos.vote.domain.team.entity.Team;
 import com.ceos.vote.domain.team.exception.TeamErrorCode;
@@ -56,10 +58,16 @@ public class TeamService {
 		List<Team> teams = teamRepository.findAll();
 
 		// 유저가 이미 투표한 팀 id 조회
-		Long myVotedTeamId = teamVoteRepository.findVotedTeamIdByUserId(userId)
-			.orElse(null);
+		Optional<Long> myVotedTeamId = teamVoteRepository.findVotedTeamIdByUserId(userId);
 
-		return TeamDetailListResponse.from(teams, myVotedTeamId);
+		List<TeamDetailInfo> teamInfos = teams.stream()
+			.map(team -> TeamDetailInfo.from(
+				team,
+				myVotedTeamId.map(id -> id.equals(team.getId())).orElse(false)
+			))
+			.toList();
+
+		return TeamDetailListResponse.from(teamInfos);
 	}
-
 }
+
