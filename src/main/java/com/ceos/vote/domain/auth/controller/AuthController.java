@@ -36,7 +36,7 @@ public class AuthController {
 
 	private final AuthService authService;
 
-	@Operation(summary = "아이디 중복 확인", description = "사용 가능한 아이디인지 확인합니다.")
+	@Operation(summary = "아이디 중복 확인", description = "**[회원가입]** 사용 가능한 아이디인지 확인합니다.")
 	@PostMapping("/check-username")
 	public ApiResponse<Void> checkUsername(
 		@Valid @RequestBody CheckUsernameRequest request
@@ -46,7 +46,7 @@ public class AuthController {
 		return ApiResponse.onSuccess("아이디 사용 가능 여부 조회 성공");
 	}
 
-	@Operation(summary = "이메일 중복 확인", description = "사용 가능한 이메일인지 확인합니다.")
+	@Operation(summary = "이메일 중복 확인", description = "**[회원가입]** 사용 가능한 이메일인지 확인합니다.")
 	@PostMapping("/check-email")
 	public ApiResponse<Void> checkEmail(
 		@Valid @RequestBody CheckEmailRequest request
@@ -56,7 +56,7 @@ public class AuthController {
 		return ApiResponse.onSuccess("이메일 사용 가능 여부 조회 성공");
 	}
 
-	@Operation(summary = "회원가입", description = "회원가입 후 자동 로그인 처리됩니다.")
+	@Operation(summary = "회원가입", description = "**[회원가입]** 회원가입 후 자동 로그인 처리됩니다.")
 	@PostMapping("/signup")
 	public ApiResponse<SignUpResponse> signup(
 		@Valid @RequestBody SignUpRequest request,
@@ -70,7 +70,7 @@ public class AuthController {
 			new SignUpResponse(result.accessToken()));
 	}
 
-	@Operation(summary = "로그인", description = "아이디/비밀번호로 로그인합니다.")
+	@Operation(summary = "로그인", description = "**[로그인]** 아이디/비밀번호로 로그인합니다.")
 	@PostMapping("/login")
 	public ApiResponse<LoginResponse> login(
 		@Valid @RequestBody LoginRequest request,
@@ -84,7 +84,7 @@ public class AuthController {
 			new LoginResponse(result.userId(), result.accessToken()));
 	}
 
-	@Operation(summary = "로그아웃", description = "인증된 사용자의 토큰을 무효화합니다.")
+	@Operation(summary = "로그아웃", description = "**[공통]** 인증된 사용자의 토큰을 무효화합니다.")
 	@PostMapping("/logout")
 	public ApiResponse<Void> logout(
 		@AuthenticationPrincipal Long userId,
@@ -97,7 +97,7 @@ public class AuthController {
 		return ApiResponse.onSuccess("로그아웃 성공");
 	}
 
-	@Operation(summary = "토큰 재발급", description = "refresh 토큰으로 새 access 토큰을 발급받습니다.")
+	@Operation(summary = "토큰 재발급", description = "**[공통]** refresh 토큰으로 새 access 토큰을 발급받습니다.")
 	@PostMapping("/refresh")
 	public ApiResponse<ReissueResponse> refresh(
 		@Parameter(hidden = true)

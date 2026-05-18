@@ -1,6 +1,7 @@
-package com.ceos.vote.domain.user.entity;
+package com.ceos.vote.domain.vote.entity;
 
-import com.ceos.vote.domain.team.entity.Team;
+import com.ceos.vote.domain.candidate.entity.Candidate;
+import com.ceos.vote.domain.user.entity.User;
 import com.ceos.vote.global.entity.BaseEntity;
 import com.ceos.vote.global.entity.enums.Part;
 
@@ -15,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,46 +24,40 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(
+	name = "candidate_votes",
+	uniqueConstraints = @UniqueConstraint(
+		name = "uk_candidate_vote_user_part",
+		columnNames = {"user_id", "part"}
+	))
 @Getter
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity {
+public class CandidateVote extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
+	@Column(name = "candidate_vote_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "team_id", nullable = false)
-	private Team team;
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-	@Column(name = "username", nullable = false, unique = true, length = 20)
-	private String username;
-
-	@Column(name = "password", nullable = false)
-	private String password;
-
-	@Column(name = "name", nullable = false, length = 20)
-	private String name;
-
-	@Column(name = "email", nullable = false, unique = true, length = 100)
-	private String email;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "candidate_id", nullable = false)
+	private Candidate candidate;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "part", nullable = false)
+	@Column(name = "part", nullable = false, length = 10)
 	private Part part;
 
-	public static User createUser(Team team, String username, String password, String name, String email, Part part) {
-		return User.builder()
-			.team(team)
-			.username(username)
-			.password(password)
-			.name(name)
-			.email(email)
-			.part(part)
+	public static CandidateVote of(User user, Candidate candidate) {
+		return CandidateVote.builder()
+			.user(user)
+			.candidate(candidate)
+			.part(candidate.getPart())
 			.build();
 	}
 }
