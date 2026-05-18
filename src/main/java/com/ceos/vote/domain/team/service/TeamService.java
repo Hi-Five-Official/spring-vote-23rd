@@ -1,14 +1,18 @@
 package com.ceos.vote.domain.team.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ceos.vote.domain.team.dto.response.TeamDetailListResponse;
+import com.ceos.vote.domain.team.dto.response.TeamDetailListResponse.TeamDetailInfo;
 import com.ceos.vote.domain.team.dto.response.TeamListResponse;
 import com.ceos.vote.domain.team.entity.Team;
 import com.ceos.vote.domain.team.exception.TeamErrorCode;
 import com.ceos.vote.domain.team.repository.TeamRepository;
+import com.ceos.vote.domain.vote.repository.TeamVoteRepository;
 import com.ceos.vote.global.apipayload.exception.GeneralException;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class TeamService {
 
 	private final TeamRepository teamRepository;
+	private final TeamVoteRepository teamVoteRepository;
 
 	public TeamListResponse getTeams() {
 		List<Team> teams = teamRepository.findAll();
@@ -45,4 +50,24 @@ public class TeamService {
 	public List<Team> getRanking() {
 		return teamRepository.findAllByOrderByVoteCountDescIdAsc();
 	}
+
+	// 투표할 팀 목록 조회
+	public TeamDetailListResponse getTeamsForVoting(Long userId) {
+
+		// 전체 팀 조회
+		List<Team> teams = teamRepository.findAll();
+
+		// 유저가 이미 투표한 팀 id 조회
+		Optional<Long> myVotedTeamId = teamVoteRepository.findVotedTeamIdByUserId(userId);
+
+		List<TeamDetailInfo> teamInfos = teams.stream()
+			.map(team -> TeamDetailInfo.from(
+				team,
+				myVotedTeamId.map(id -> id.equals(team.getId())).orElse(false)
+			))
+			.toList();
+
+		return TeamDetailListResponse.from(teamInfos);
+	}
 }
+
