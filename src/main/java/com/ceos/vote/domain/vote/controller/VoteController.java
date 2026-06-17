@@ -12,6 +12,7 @@ import com.ceos.vote.domain.vote.dto.request.CandidateVoteRequest;
 import com.ceos.vote.domain.vote.dto.request.TeamVoteRequest;
 import com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse;
 import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse;
+import com.ceos.vote.domain.vote.dto.response.VoteCountResponse;
 import com.ceos.vote.domain.vote.service.VoteService;
 import com.ceos.vote.global.apipayload.response.ApiResponse;
 import com.ceos.vote.global.entity.enums.Part;
@@ -69,5 +70,12 @@ public class VoteController {
 
 		CandidateVoteResultListResponse response = voteService.getCandidateVoteResult(userId, part);
 		return ApiResponse.onSuccess("파트장 투표 결과 조회 성공", response);
+	}
+
+	@Operation(summary = "총 투표 수 조회", description = "**[홈]** 인증 없이 진행된 총 투표 수(파트장 투표 + 팀 투표)를 조회합니다.")
+	@GetMapping("/count")
+	public ApiResponse<VoteCountResponse> getTotalVoteCount() {
+		VoteCountResponse response = voteService.getTotalVoteCount();
+		return ApiResponse.onSuccess("총 투표 수 조회 성공", response);
 	}
 }
