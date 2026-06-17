@@ -18,6 +18,7 @@ import com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse;
 import com.ceos.vote.domain.vote.dto.response.CandidateVoteResultListResponse.CandidateVoteResultInfo;
 import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse;
 import com.ceos.vote.domain.vote.dto.response.TeamVoteResultListResponse.TeamVoteResultInfo;
+import com.ceos.vote.domain.vote.dto.response.VoteCountResponse;
 import com.ceos.vote.domain.vote.entity.CandidateVote;
 import com.ceos.vote.domain.vote.entity.TeamVote;
 import com.ceos.vote.domain.vote.exception.VoteErrorCode;
@@ -120,5 +121,11 @@ public class VoteService {
 			.toList();
 
 		return CandidateVoteResultListResponse.from(candidateInfos);
+	}
+
+	public VoteCountResponse getTotalVoteCount() {
+		long candidateVoteCount = candidateVoteRepository.count();
+		long teamVoteCount = teamVoteRepository.count();
+		return VoteCountResponse.from(candidateVoteCount + teamVoteCount);
 	}
 }
